@@ -1,4 +1,5 @@
-README.txt
+MANIFEST.in
+README.md
 setup.py
 e89_security/RNCryptor.py
 e89_security/__init__.py
