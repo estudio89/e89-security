@@ -146,7 +146,7 @@ class RNCryptor(object):
     def _hmac(self, key, data):
         return hmac.new(key, data, hashlib.sha256).digest()
 
-    def _pbkdf2(self, password, salt, iterations=10000, key_length=32):
+    def _pbkdf2(self, password, salt, iterations=100, key_length=32):
         return KDF.PBKDF2(password, salt, dkLen=key_length, count=iterations,
                           prf=lambda p, s: hmac.new(p, s, hashlib.sha1).digest())
 
