@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from e89_security import decrypt_message, encrypt_message
 import RNCryptor
 import json
