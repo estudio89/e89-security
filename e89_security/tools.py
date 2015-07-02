@@ -1,14 +1,19 @@
 from django.http import HttpResponse, Http404
+from data_parser import RawPostParser
 from e89_security import decrypt_message, encrypt_message
 import RNCryptor
 import json
+from io import BytesIO
 
 def _get_user_data(request, key, encryption_active):
     body = request.body
-    request._encoding="ISO-8859-1"
+    # Parsing raw content
+    rpp = RawPostParser(request.META, BytesIO(body), [])
+    raw_POST = rpp.parse()
+
     try:
-        if request.POST.has_key("json"):
-            message = request.POST['json']
+        if raw_POST.has_key("json"):
+            message = raw_POST['json']
         else:
             message = body
 
@@ -27,4 +32,4 @@ def _generate_user_response(data, key, encryption_active):
     if encryption_active:
         data = encrypt_message(data, key)
 
-    return HttpResponse(data,content_type="application/json; charset=ISO-8859-1")
+    return HttpResponse(data,content_type="application/octet-stream")
