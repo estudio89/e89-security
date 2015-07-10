@@ -5,11 +5,14 @@ import RNCryptor
 import json
 from io import BytesIO
 
-def _get_user_data(request, key, encryption_active):
+def _get_user_data(request, key, encryption_active, multipart=True):
     body = request.body
     # Parsing raw content
-    rpp = RawPostParser(request.META, BytesIO(body), [])
-    raw_POST = rpp.parse()
+    if multipart:
+        rpp = RawPostParser(request.META, BytesIO(body), [])
+        raw_POST = rpp.parse()
+    else:
+        raw_POST = request.POST
 
     try:
         if raw_POST.has_key("json"):
