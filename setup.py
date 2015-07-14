@@ -11,7 +11,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='e89-security',
-    version='1.0.0',
+    version='1.0.1',
     packages=['e89_security'],
     include_package_data=True,
     license='BSD License',  # example license
