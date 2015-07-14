@@ -2,6 +2,8 @@
 from django.conf import settings
 from RNCryptor import RNCryptor,BadData
 
+__VERSION__ = "1.0.1"
+
 def decrypt_message(msg, key):
     cryptor = RNCryptor()
     if type(msg) == type(u""):
