@@ -2,7 +2,7 @@
 from django.conf import settings
 from RNCryptor import RNCryptor,BadData
 
-__VERSION__ = "1.0.1"
+__VERSION__ = "1.0.2"
 
 def decrypt_message(msg, key):
     cryptor = RNCryptor()
