@@ -1,4 +1,4 @@
-from django.http.multipartparser import MultiPartParser, LazyStream, ChunkIter, Parser, FIELD, exhaust
+from django.http.multipartparser import MultiPartParser, LazyStream, ChunkIter, Parser, FIELD, FILE, RAW, exhaust
 from django.core.files.uploadhandler import StopUpload
 from django.utils.datastructures import MultiValueDict
 from django.utils.encoding import force_text
