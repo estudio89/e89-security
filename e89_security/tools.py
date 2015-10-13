@@ -1,11 +1,12 @@
 from django.http import HttpResponse, Http404
 from data_parser import RawPostParser
-from e89_security import decrypt_message, encrypt_message
+from e89_security import decrypt_message, encrypt_message, _gzip_string, _ungzip_string
 import RNCryptor
 import json
 from io import BytesIO
+import StringIO
 
-def _get_user_data(request, key, encryption_active, multipart=True):
+def _get_user_data(request, key, encryption_active, gzip_active=False, multipart=True):
     body = request.body
     # Parsing raw content
     if multipart:
@@ -21,8 +22,14 @@ def _get_user_data(request, key, encryption_active, multipart=True):
             message = body
 
         if encryption_active:
-            data = json.loads(decrypt_message(message, key))
+            decrypted = decrypt_message(message, key, decode=(not gzip_active))
+
+            if gzip_active:
+                decrypted = _ungzip_string(decrypted)
+            data = json.loads(decrypted)
         else:
+            if gzip_active:
+                message = _ungzip_string(message)
             data = json.loads(message)
 
     except RNCryptor.BadData:
@@ -30,9 +37,13 @@ def _get_user_data(request, key, encryption_active, multipart=True):
 
     return data
 
-def _generate_user_response(data, key, encryption_active):
+def _generate_user_response(data, key, encryption_active, gzip_active=False):
     data = json.dumps(data, ensure_ascii=False)
+    if gzip_active:
+        data = _gzip_string(data)
+
     if encryption_active:
         data = encrypt_message(data, key)
 
     return HttpResponse(data,content_type="application/octet-stream")
+
