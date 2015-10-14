@@ -47,3 +47,41 @@ def _generate_user_response(data, key, encryption_active, gzip_active=False):
 
     return HttpResponse(data,content_type="application/octet-stream")
 
+def secure_view(encryption_key, encryption_active):
+    ''' Decorator that secures a view.
+        The view that is decorated will receive as arguments the request, a dictionary containing
+        data received and whatever keyword arguments it received. It must return a dictionary containing data to be sent back.
+
+        Example:
+
+        @secure_view(encryption_key="password", encryption_active=True)
+        def my_view(request, data):
+            ...
+            return {}
+    '''
+
+    def wrapper(wrapped_view):
+
+        def decorator(request, *args, **kwargs):
+            if request.method != 'POST':
+                raise Http404
+
+            gzip_active = request.META.get('HTTP_X_SECURITY_GZIP', 'false') == 'true'
+
+            if not request.user.is_authenticated():
+                data = _get_user_data(request, encryption_key, encryption_active, gzip_active)
+            else:
+                data = _get_user_data(request, encryption_key, False, gzip_active, multipart=False)
+
+            ret = wrapped_view(request, data, *args, **kwargs)
+
+            if not request.user.is_authenticated():
+                response = _generate_user_response(ret, encryption_key, encryption_active, gzip_active)
+            else:
+                response = _generate_user_response(ret, encryption_key, False, gzip_active)
+
+            return response
+
+        return decorator
+
+    return wrapper
