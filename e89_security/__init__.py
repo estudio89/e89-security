@@ -4,7 +4,7 @@ from RNCryptor import RNCryptor,BadData
 import StringIO
 import gzip
 
-__VERSION__ = "1.0.3"
+__VERSION__ = "1.0.4"
 
 def decrypt_message(msg, key, decode=True):
     cryptor = RNCryptor()
