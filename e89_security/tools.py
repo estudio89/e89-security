@@ -38,7 +38,7 @@ def _get_user_data(request, key, encryption_active, gzip_active=False, multipart
     return data
 
 def _generate_user_response(data, key, encryption_active, gzip_active=False):
-    data = json.dumps(data, ensure_ascii=False)
+    data = json.dumps(data, ensure_ascii=False, separators=(',', ':'))
     if gzip_active:
         data = _gzip_string(data)
 
