@@ -68,17 +68,27 @@ def secure_view(encryption_key, encryption_active):
 
             gzip_active = request.META.get('HTTP_X_SECURITY_GZIP', 'false') == 'true'
 
+            try:
+                val_encryption_key = encryption_key()
+            except TypeError:
+                val_encryption_key = encryption_key
+
+            try:
+                val_encryption_active = encryption_active()
+            except TypeError:
+                val_encryption_active = encryption_active
+
             if not request.user.is_authenticated():
-                data = _get_user_data(request, encryption_key, encryption_active, gzip_active)
+                data = _get_user_data(request, val_encryption_key, val_encryption_active, gzip_active)
             else:
-                data = _get_user_data(request, encryption_key, False, gzip_active, multipart=False)
+                data = _get_user_data(request, val_encryption_key, False, gzip_active, multipart=False)
 
             ret = wrapped_view(request, data, *args, **kwargs)
 
             if not request.user.is_authenticated():
-                response = _generate_user_response(ret, encryption_key, encryption_active, gzip_active)
+                response = _generate_user_response(ret, val_encryption_key, val_encryption_active, gzip_active)
             else:
-                response = _generate_user_response(ret, encryption_key, False, gzip_active)
+                response = _generate_user_response(ret, val_encryption_key, False, gzip_active)
 
             return response
 
