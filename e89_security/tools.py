@@ -21,7 +21,7 @@ def _get_user_data(request, key, encryption_active, gzip_active=False, multipart
         else:
             message = body
 
-        if encryption_active:
+        if encryption_active and not request.is_secure():
             decrypted = decrypt_message(message, key, decode=(not gzip_active))
 
             if gzip_active:
