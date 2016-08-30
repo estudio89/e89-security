@@ -78,6 +78,8 @@ def secure_view(encryption_key, encryption_active):
             except TypeError:
                 val_encryption_active = encryption_active
 
+            val_encryption_active = val_encryption_active and not request.is_secure()
+
             if not request.user.is_authenticated():
                 data = _get_user_data(request, val_encryption_key, val_encryption_active, gzip_active)
             else:
